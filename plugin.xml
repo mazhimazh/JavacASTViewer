@@ -7,9 +7,11 @@
        <view
              class="astview.JavacASTViewer"
              icon="icons/sample.png"
-             id="javacastviewer"
+             id="astview"
              name="JavacASTViewer"
-             restorable="true">
+             restorable="false">
        </view>
    </extension> 
+   
+ 
 </plugin>
