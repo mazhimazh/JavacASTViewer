@@ -57,8 +57,6 @@ import astview.provider.ViewLabelProvider;
 
 public class JavacASTViewer extends ViewPart {
 	
-	
-	
 	public static final String ID = "javacastviewer";
 	
 	private TreeViewer fViewer;
@@ -101,7 +99,7 @@ public class JavacASTViewer extends ViewPart {
 		
 		fViewer.setLabelProvider(new ViewLabelProvider());
 		fViewer.setContentProvider(new ViewContentProvider());
-		fViewer.setInput(getSite());
+//		fViewer.setInput(getSite());
 		fViewer.addSelectionChangedListener(fSuperListener);
 		fViewer.addDoubleClickListener(fSuperListener);
 		

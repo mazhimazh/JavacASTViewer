@@ -4,10 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavacASTNode {
-	private int id;
+	
 	private String name;
-	private List<JavacASTNode> children;
+	private String type;
+	private List<JavacASTNode> children = null;
 	private JavacASTNode parent = null;
+	
+	public JavacASTNode(String k) {
+		
+	}
+	
+	public void test() {
+		JavacASTNode x = new JavacASTNode("dd");
+		   JavacASTNode jand = new JavacASTNode("pid","JCExpression");
+	}
+	
+	
+	public JavacASTNode(String name,String type) {
+		this.name = name;
+		this.type = type;
+	}
 
 	public JavacASTNode() {
 		children = new ArrayList<JavacASTNode>();
@@ -20,6 +36,10 @@ public class JavacASTNode {
 	public void setChildren(List<JavacASTNode> children) {
 		this.children = children;
 	}
+	
+	public void addChild(JavacASTNode node) {
+		children.add(node);
+	}
 
 	public JavacASTNode getParent() {
 		return parent;
@@ -29,14 +49,6 @@ public class JavacASTNode {
 		this.parent = parent;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -44,8 +56,17 @@ public class JavacASTNode {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public String toString() {
-		return name;
+		return name + "=" + type;
 	}
+
 }
