@@ -10,6 +10,7 @@ import javax.tools.ToolProvider;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -21,6 +22,7 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -294,8 +296,12 @@ public class JavacASTViewer extends ViewPart {
 		fRefreshAction = new Action() {
 			@Override
 			public void run() {
-//				performRefresh();
-				System.out.println("dddd");
+				try {
+					refreshAST();
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+//				System.out.println("dddd");
 			}
 		};
 		fRefreshAction.setText("&Refresh AST"); //$NON-NLS-1$
@@ -304,6 +310,28 @@ public class JavacASTViewer extends ViewPart {
 		ASTViewImages.setImageDescriptors(fRefreshAction, ASTViewImages.REFRESH);
 		
 	}
+	
+//	protected void performRefresh() {
+//		if (fTypeRoot != null) {
+//			try {
+//				refreshAST();
+//			} catch (CoreException e) {
+//				showAndLogError("Could not set AST view input ", e); //$NON-NLS-1$
+//			}
+//		}
+//	}
+	
+	private void refreshAST() throws CoreException {
+//		ASTNode node= getASTNodeNearSelection((IStructuredSelection) fViewer.getSelection());
+//		int offset= 0;
+//		int length= 0;
+//		if (node != null) {
+//			offset= node.getStartPosition();
+//			length= node.getLength();
+//		}
+		internalSetInput(is);
+	}
+
 
 
 	public void setInput(ITextEditor editor) throws CoreException {
