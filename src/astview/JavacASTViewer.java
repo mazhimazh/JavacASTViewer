@@ -345,10 +345,9 @@ public class JavacASTViewer extends ViewPart {
 		for (JavaFileObject fo : dfm.getJavaFileObjects(new File(is)))
 			otherFiles = otherFiles.prepend(fo);
 
-		com.sun.tools.javac.util.List<JCTree.JCCompilationUnit> fk =  comp.parseFiles(otherFiles);
+		com.sun.tools.javac.util.List<JCTree.JCCompilationUnit> list =  comp.parseFiles(otherFiles);
 
-		System.out.println(fk);
-		return fk.get(0);
+		return list.get(0);
 	}
 	
 	private void resetView(JCCompilationUnit root) {

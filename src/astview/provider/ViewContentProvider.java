@@ -13,10 +13,11 @@ public class ViewContentProvider extends ArrayContentProvider implements ITreeCo
 	
 	public Object[] getElements(Object inputElement) {
 		
-		JavacASTNode root = new JavacASTNode("root","JCCompilation");
+//		JavacASTNode root = new JavacASTNode("root","JCCompilation");
+		JavacASTNode root = null;
 		if(inputElement instanceof JCCompilationUnit) {
 			JavacASTVisitor visitor = new JavacASTVisitor();
-			visitor.traverse((JCCompilationUnit)inputElement,root);
+			root  = visitor.traverse((JCCompilationUnit)inputElement);
 		}
 		
 //		JavacASTNode compilatinUnitNode = new JavacASTNode();

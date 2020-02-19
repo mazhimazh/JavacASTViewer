@@ -3,29 +3,32 @@ package astview;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.source.tree.Tree;
+
 public class JavacASTNode {
+	
+	Tree.Kind kind;
 	
 	private String name;
 	private String type;
+	private String value;
+	
 	private List<JavacASTNode> children = null;
 	private JavacASTNode parent = null;
 	
-	public JavacASTNode(String k) {
-		
-	}
-	
-	public void test() {
-		JavacASTNode x = new JavacASTNode("dd");
-		   JavacASTNode jand = new JavacASTNode("pid","JCExpression");
-	}
-	
-	
-	public JavacASTNode(String name,String type) {
+	public JavacASTNode(String name, String type) {
 		this.name = name;
 		this.type = type;
+		children = new ArrayList<JavacASTNode>();
 	}
 
-	public JavacASTNode() {
+	public JavacASTNode(String name, String type, String value) {
+		this(name, type);
+		this.value = value;
+	}
+	
+	public JavacASTNode(Tree.Kind kind) {
+		this.kind = kind;
 		children = new ArrayList<JavacASTNode>();
 	}
 
@@ -64,9 +67,33 @@ public class JavacASTNode {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
+	public Tree.Kind getKind() {
+		return kind;
+	}
+
+	public void setKind(Tree.Kind kind) {
+		this.kind = kind;
+	}
 
 	public String toString() {
-		return name + "=" + type;
+		String display = name + "=" + type;
+		if (value != null && value.length() > 0) {
+			display = display + " " + value.trim();
+		}
+		return display;
 	}
 
 }
+
+
+
+
