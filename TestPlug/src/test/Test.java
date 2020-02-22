@@ -11,7 +11,7 @@ public class Test {
 	
 	public void test(String a) {
 		List<String> list = new ArrayList<String>();
-		list.add("a");
+		;
 		list.add("b");
 	}
 }

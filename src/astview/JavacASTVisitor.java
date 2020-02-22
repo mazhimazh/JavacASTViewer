@@ -1,10 +1,10 @@
 package astview;
 
 import com.sun.source.tree.*;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.List;
-import com.sun.tools.javac.util.ListBuffer;
 
 public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
@@ -20,8 +20,10 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 			return;
 
 		JavacASTNode sub = currnode.accept(this, null);
-		sub.setName("pid");
-		sub.setType(currnode.getClass().getSimpleName());
+		sub.setName(property);
+		if(sub.getType()!=null) {
+			sub.setType(currnode.getClass().getSimpleName());
+		}
 		sub.setParent(parent);
 		parent.addChild(sub);
 
@@ -39,7 +41,9 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 			JCTree tree = trees.get(i);
 			JavacASTNode def_n = tree.accept(this, null);
 			def_n.setName(i + "");
-			def_n.setType(tree.getClass().getTypeName());
+			if(def_n.getType()!=null) {
+				def_n.setType(tree.getClass().getSimpleName());
+			}
 			def_n.setParent(defs);
 
 			defs.addChild(def_n);
@@ -84,7 +88,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	public JavacASTNode visitIdentifier(IdentifierTree node, Void p) {
 		JCIdent t = (JCIdent) node;
 		JavacASTNode currnode = new JavacASTNode();
-		JavacASTNode qualid = new JavacASTNode("name", t.name.getClass().getTypeName(), t.name.toString());
+		JavacASTNode qualid = new JavacASTNode("name", t.name.getClass().getSimpleName(), t.name.toString());
 		currnode.addChild(qualid);
 		qualid.setParent(currnode);
 		return currnode;
@@ -92,14 +96,24 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 	@Override
 	public JavacASTNode visitAnnotatedType(AnnotatedTypeTree node, Void p) {
-		// TODO Auto-generated method stub
-		return null;
+		JCAnnotatedType t = (JCAnnotatedType) node;
+		JavacASTNode currnode = new JavacASTNode();
+		
+		traverse(currnode, "annotations", t.annotations);
+		traverse(currnode, "underlyingType", t.underlyingType);
+		
+		return currnode;
 	}
 
 	@Override
 	public JavacASTNode visitAnnotation(AnnotationTree node, Void p) {
-		// TODO Auto-generated method stub
-		return null;
+		JCAnnotation t = (JCAnnotation) node;
+		JavacASTNode currnode = new JavacASTNode();
+
+		traverse(currnode, "annotationType", t.annotationType);
+		traverse(currnode, "args", t.args);
+
+		return currnode;
 	}
 
 	@Override
@@ -169,8 +183,11 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitBreak(BreakTree node, Void p) {
 		JCBreak t = (JCBreak) node;
-		
 		JavacASTNode currnode = new JavacASTNode();
+		
+		JavacASTNode qualid = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
+		currnode.addChild(qualid);
+		qualid.setParent(currnode);
 		return currnode;
 	}
 
@@ -192,7 +209,6 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 		traverse(currnode,"param",t.param);
 		traverse(currnode,"body",t.body);
-
 
 		return currnode;
 	}
@@ -224,7 +240,11 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	public JavacASTNode visitContinue(ContinueTree node, Void p) {
 		JCContinue t = (JCContinue) node;
 		JavacASTNode currnode = new JavacASTNode();
-		return currnode;
+		
+		JavacASTNode label = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
+		currnode.addChild(label);
+		label.setParent(currnode);
+		return currnode;		
 	}
 
 	@Override
@@ -240,9 +260,9 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 	@Override
 	public JavacASTNode visitEmptyStatement(EmptyStatementTree node, Void p) {
-		JCSkip t = (JCSkip) node;
-		
+//		JCSkip t = (JCSkip) node;
 		JavacASTNode currnode = new JavacASTNode();
+		currnode.setValue(";");
 		return currnode;
 	}
 
@@ -316,14 +336,22 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 	@Override
 	public JavacASTNode visitIntersectionType(IntersectionTypeTree node, Void p) {
-		// TODO Auto-generated method stub
-		return null;
+		JCTypeIntersection t = (JCTypeIntersection) node;
+		JavacASTNode currnode = new JavacASTNode();
+		
+		traverse(currnode,"bounds",t.bounds);
+		
+		return currnode;
 	}
 
 	@Override
 	public JavacASTNode visitLabeledStatement(LabeledStatementTree node, Void p) {
 		JCLabeledStatement t = (JCLabeledStatement) node;
 		JavacASTNode currnode = new JavacASTNode();
+		
+		JavacASTNode label = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
+		currnode.addChild(label);
+		label.setParent(currnode);
 		
 		traverse(currnode,"body",t.body);
 
@@ -332,21 +360,36 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 	@Override
 	public JavacASTNode visitLambdaExpression(LambdaExpressionTree node, Void p) {
-		// TODO Auto-generated method stub
-		return null;
+		JCLambda t = (JCLambda) node;
+		JavacASTNode currnode = new JavacASTNode();
+
+		traverse(currnode, "params", t.params);
+		traverse(currnode, "body", t.body);
+
+		return currnode;
 	}
 
 	@Override
 	public JavacASTNode visitLiteral(LiteralTree node, Void p) {
 		JCLiteral t = (JCLiteral) node;
 		JavacASTNode currnode = new JavacASTNode();
-		return currnode;
+		
+		JavacASTNode value = new JavacASTNode("value", t.value.getClass().getSimpleName(), t.value.toString());
+		currnode.addChild(value);
+		value.setParent(currnode);
+		
+		return currnode;		
 	}
 
 	@Override
 	public JavacASTNode visitMemberReference(MemberReferenceTree node, Void p) {
-		// TODO Auto-generated method stub
-		return null;
+		JCMemberReference t = (JCMemberReference) node;
+		JavacASTNode currnode = new JavacASTNode();
+		
+		traverse(currnode, "expr", t.expr);
+		traverse(currnode, "typeargs", t.typeargs);
+		
+		return currnode;
 	}
 
 	@Override
@@ -373,7 +416,6 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		traverse(currnode,"defaultValue",t.defaultValue);
 
 		return currnode;
-
 	}
 
 	@Override
@@ -393,6 +435,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		JCModifiers t = (JCModifiers) node;
 		JavacASTNode currnode = new JavacASTNode();
 		
+		// todo
 		traverse(currnode,"annotations",t.annotations);
 
 		return currnode;
@@ -415,7 +458,6 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		JCNewClass t = (JCNewClass) node;
 		JavacASTNode currnode = new JavacASTNode();
 
-
 		traverse(currnode,"encl",t.encl);
 		traverse(currnode,"typeargs",t.typeargs);
 		traverse(currnode,"clazz",t.clazz);
@@ -423,7 +465,6 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		traverse(currnode,"def",t.def);
 
 		return currnode;
-
 	}
 
 	@Override
@@ -431,17 +472,17 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		JCTree tree = (JCTree) node;
 		JavacASTNode currnode = new JavacASTNode();
 
-//		switch (tree.getTag()) {
-//		case JCTree.LETEXPR: {
-//			LetExpr t = (LetExpr) node;
-//			List<JCVariableDecl> defs = copy(t.defs, p);
-//			JCTree expr = copy(t.expr, p);
-//			return M.at(t.pos).LetExpr(defs, expr);
-//		}
-//		default:
-//			throw new AssertionError("unknown tree tag: " + tree.getTag());
-//		}
-		return currnode;
+		switch (tree.getTag()) {
+		case LETEXPR: {
+			LetExpr t = (LetExpr) node;
+			traverse(currnode, "defs", t.defs);
+			traverse(currnode, "expr", t.expr);
+			return currnode;
+		}
+		default:
+			throw new AssertionError("unknown tree tag: " + tree.getTag());
+		}
+
 	}
 
 	@Override
@@ -469,7 +510,39 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	public JavacASTNode visitPrimitiveType(PrimitiveTypeTree node, Void p) {
 		JCPrimitiveTypeTree t = (JCPrimitiveTypeTree) node;
 		JavacASTNode currnode = new JavacASTNode();
-		return currnode;
+
+		TypeTag tag = t.typetag;
+		switch (tag) {
+		case BOOLEAN:
+			currnode.setType("boolean");
+			return currnode;
+		case BYTE:
+			currnode.setType("byte");
+			return currnode;
+		case SHORT:
+			currnode.setType("short");
+			return currnode;
+		case INT:
+			currnode.setType("int");
+			return currnode;
+		case LONG:
+			currnode.setType("long");
+			return currnode;
+		case CHAR:
+			currnode.setType("char");
+			return currnode;
+		case FLOAT:
+			currnode.setType("float");
+			return currnode;
+		case DOUBLE:
+			currnode.setType("double");
+			return currnode;
+		case VOID:
+			currnode.setType("void");
+			return currnode;
+		default:
+			throw new AssertionError("unknown primitive type " + this);
+		}
 	}
 
 	@Override
@@ -596,13 +669,9 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		JCWildcard t = (JCWildcard) node;
 		JavacASTNode currnode = new JavacASTNode();
 		
+		// todo
 		traverse(currnode,"inner",t.inner);
 
-
-		/*
-		 * TypeBoundKind kind = M.at(t.kind.pos).TypeBoundKind(t.kind.kind); JCTree
-		 * inner = copy(t.inner, p);
-		 */
 		return currnode;
 	}
 
