@@ -79,11 +79,15 @@ public class JavacASTNode {
 	
 
 	public String toString() {
-		String display = name + "={" + type + "}";
+		String display = name;
+		if (type != null && type.length() > 0) {
+			display = display + "={" + type.trim() + "}";
+		}else {
+			display = display + "=";
+		}
 		if (value != null && value.length() > 0) {
 			display = display + " " + value.trim();
 		}
-	
 		return display;
 	}
 

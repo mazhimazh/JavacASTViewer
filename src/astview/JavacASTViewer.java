@@ -62,14 +62,14 @@ public class JavacASTViewer extends ViewPart {
 	public static final String ID = "javacastviewer";
 	
 	private TreeViewer fViewer;
-	private DrillDownAdapter fDrillDownAdapter;
+//	private DrillDownAdapter fDrillDownAdapter;
 	private SashForm fSash;
 	
 	private ListenerMix fSuperListener;
-	private ISelectionChangedListener fTrayUpdater;
-	
-	private TreeViewer fTray;
-	private ArrayList<Object> fTrayRoots;
+//	private ISelectionChangedListener fTrayUpdater;
+//	
+//	private TreeViewer fTray;
+//	private ArrayList<Object> fTrayRoots;
 	
 	private Action fRefreshAction;
 	
@@ -105,69 +105,69 @@ public class JavacASTViewer extends ViewPart {
 		fViewer.addSelectionChangedListener(fSuperListener);
 		fViewer.addDoubleClickListener(fSuperListener);
 		
-		fDrillDownAdapter = new DrillDownAdapter(fViewer);
+//		fDrillDownAdapter = new DrillDownAdapter(fViewer);
 		
-		ViewForm trayForm= new ViewForm(fSash, SWT.NONE);
-		Label label= new Label(trayForm, SWT.NONE);
-		label.setText(" Comparison Tray (* = selection in the upper tree):"); //$NON-NLS-1$
-		trayForm.setTopLeft(label);
+//		ViewForm trayForm= new ViewForm(fSash, SWT.NONE);
+//		Label label= new Label(trayForm, SWT.NONE);
+//		label.setText(" Comparison Tray (* = selection in the upper tree):"); //$NON-NLS-1$
+//		trayForm.setTopLeft(label);
 
-		fTray= new TreeViewer(trayForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		trayForm.setContent(fTray.getTree());
-		
-		
-		fTray.setContentProvider(new TrayContentProvider());
-		fTray.setLabelProvider(new TrayLabelProvider());
-		fTray.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-		fTrayUpdater= new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-//				IStructuredSelection viewerSelection= (IStructuredSelection) fViewer.getSelection();
-//				if (viewerSelection.size() == 1) {
-//					Object first= viewerSelection.getFirstElement();
-//					if (unwrapAttribute(first) != null) {
-//						trayLabelProvider.setViewerElement(first);
-//						return;
-//					}
-//				}
-//				trayLabelProvider.setViewerElement(null);
-				System.out.println("fTrayUpdater->selectionChanged(SelectionChangedEvent event)");
-			}
-		};
-		fTray.addPostSelectionChangedListener(fTrayUpdater);
-		fViewer.addPostSelectionChangedListener(fTrayUpdater);
-		fTray.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-//				performTrayDoubleClick();
-				System.out.println("fTray->doubleClick()");
-			}
-		});
-		fTray.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-//				IStructuredSelection selection= (IStructuredSelection) event.getSelection();
-//				fDeleteAction.setEnabled(selection.size() >= 1 && fTray.getTree().isFocusControl());
-				System.out.println("fTray->addSelectionChangedListener()");
-			}
-		});
-		fTray.getTree().addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-//				IStructuredSelection selection= (IStructuredSelection) fTray.getSelection();
-//				fDeleteAction.setEnabled(selection.size() >= 1);
-				System.out.println("fTray->FocusAdapter()");
-			}
-			@Override
-			public void focusLost(FocusEvent e) {
-//				fDeleteAction.setEnabled(false);
-				System.out.println("fTray->focusLost()");
-			}
-		});
+//		fTray= new TreeViewer(trayForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+//		trayForm.setContent(fTray.getTree());
+//		
+//		
+//		fTray.setContentProvider(new TrayContentProvider());
+//		fTray.setLabelProvider(new TrayLabelProvider());
+//		fTray.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+//		fTrayUpdater= new ISelectionChangedListener() {
+//			@Override
+//			public void selectionChanged(SelectionChangedEvent event) {
+////				IStructuredSelection viewerSelection= (IStructuredSelection) fViewer.getSelection();
+////				if (viewerSelection.size() == 1) {
+////					Object first= viewerSelection.getFirstElement();
+////					if (unwrapAttribute(first) != null) {
+////						trayLabelProvider.setViewerElement(first);
+////						return;
+////					}
+////				}
+////				trayLabelProvider.setViewerElement(null);
+//				System.out.println("fTrayUpdater->selectionChanged(SelectionChangedEvent event)");
+//			}
+//		};
+//		fTray.addPostSelectionChangedListener(fTrayUpdater);
+//		fViewer.addPostSelectionChangedListener(fTrayUpdater);
+//		fTray.addDoubleClickListener(new IDoubleClickListener() {
+//			@Override
+//			public void doubleClick(DoubleClickEvent event) {
+////				performTrayDoubleClick();
+//				System.out.println("fTray->doubleClick()");
+//			}
+//		});
+//		fTray.addSelectionChangedListener(new ISelectionChangedListener() {
+//			@Override
+//			public void selectionChanged(SelectionChangedEvent event) {
+////				IStructuredSelection selection= (IStructuredSelection) event.getSelection();
+////				fDeleteAction.setEnabled(selection.size() >= 1 && fTray.getTree().isFocusControl());
+//				System.out.println("fTray->addSelectionChangedListener()");
+//			}
+//		});
+//		fTray.getTree().addFocusListener(new FocusAdapter() {
+//			@Override
+//			public void focusGained(FocusEvent e) {
+////				IStructuredSelection selection= (IStructuredSelection) fTray.getSelection();
+////				fDeleteAction.setEnabled(selection.size() >= 1);
+//				System.out.println("fTray->FocusAdapter()");
+//			}
+//			@Override
+//			public void focusLost(FocusEvent e) {
+////				fDeleteAction.setEnabled(false);
+//				System.out.println("fTray->focusLost()");
+//			}
+//		});
 		
 		makeActions();
-		hookContextMenu();
-		hookTrayContextMenu();
+//		hookContextMenu();
+//		hookTrayContextMenu();
 		contributeToActionBars();
 		getSite().setSelectionProvider(new ASTViewSelectionProvider(fViewer));
 		
@@ -184,44 +184,44 @@ public class JavacASTViewer extends ViewPart {
 	public void setFocus() {
 		// not supported
 	}
-	
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				JavacASTViewer.this.fillContextMenu(manager);
-//				System.out.println("hookContextMenu->menuAboutToShow(IMenuManager manager)");
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
-		fViewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, fViewer);
-	}
-	
-	private void hookTrayContextMenu() {
-		MenuManager menuMgr = new MenuManager("#TrayPopupMenu"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-//				manager.add(fCopyAction);
-//				manager.add(fDeleteAction);
-//				manager.add(new Separator());
-//				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-				System.out.println("hookTrayContextMenu->menuAboutToShow(IMenuManager manager)");
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(fTray.getControl());
-		fTray.getControl().setMenu(menu);
-		getSite().registerContextMenu("#TrayPopupMenu", menuMgr, fTray); //$NON-NLS-1$
-	}
+//	
+//	private void hookContextMenu() {
+//		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+//		menuMgr.setRemoveAllWhenShown(true);
+//		menuMgr.addMenuListener(new IMenuListener() {
+//			@Override
+//			public void menuAboutToShow(IMenuManager manager) {
+//				JavacASTViewer.this.fillContextMenu(manager);
+////				System.out.println("hookContextMenu->menuAboutToShow(IMenuManager manager)");
+//			}
+//		});
+//		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
+//		fViewer.getControl().setMenu(menu);
+//		getSite().registerContextMenu(menuMgr, fViewer);
+//	}
+//	
+//	private void hookTrayContextMenu() {
+//		MenuManager menuMgr = new MenuManager("#TrayPopupMenu"); //$NON-NLS-1$
+//		menuMgr.setRemoveAllWhenShown(true);
+//		menuMgr.addMenuListener(new IMenuListener() {
+//			@Override
+//			public void menuAboutToShow(IMenuManager manager) {
+////				manager.add(fCopyAction);
+////				manager.add(fDeleteAction);
+////				manager.add(new Separator());
+////				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+//				System.out.println("hookTrayContextMenu->menuAboutToShow(IMenuManager manager)");
+//			}
+//		});
+//		Menu menu = menuMgr.createContextMenu(fTray.getControl());
+//		fTray.getControl().setMenu(menu);
+//		getSite().registerContextMenu("#TrayPopupMenu", menuMgr, fTray); //$NON-NLS-1$
+//	}
 	
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager()); // 下拉菜单栏
 		fillLocalToolBar(bars.getToolBarManager()); // 工具栏
+//		fillLocalPullDown(bars.getMenuManager()); // 下拉菜单栏
 		
 //		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
 //		bars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fFocusAction);
@@ -230,14 +230,13 @@ public class JavacASTViewer extends ViewPart {
 //		IHandlerService handlerService= getViewSite().getService(IHandlerService.class);
 //		handlerService.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR, 
 //				new ActionHandler(fLinkWithEditor));
-		
 	}
 	
-	private void fillLocalPullDown(IMenuManager manager) {
+//	private void fillLocalPullDown(IMenuManager manager) {
 //		for (ASTView.ASTLevelToggle action : fASTVersionToggleActions) {
 //			manager.add(action);
 //		}
-		manager.add(new Separator());
+//		manager.add(new Separator());
 //		manager.add(fCreateBindingsAction);
 //		manager.add(fStatementsRecoveryAction);
 //		manager.add(fBindingsRecoveryAction);
@@ -253,15 +252,15 @@ public class JavacASTViewer extends ViewPart {
 //		manager.add(new Separator());
 //		manager.add(fFilterNonRelevantAction);
 //		manager.add(fLinkWithEditor);
-	}
+//	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
 //		manager.add(fFocusAction);
 		manager.add(fRefreshAction);
 //		manager.add(fClearAction);
-		manager.add(new Separator());
-		fDrillDownAdapter.addNavigationActions(manager);
-		manager.add(new Separator());
+//		manager.add(new Separator());
+//		fDrillDownAdapter.addNavigationActions(manager);
+//		manager.add(new Separator());
 //		manager.add(fExpandAction);
 //		manager.add(fCollapseAction);
 //		manager.add(fLinkWithEditor);
@@ -330,6 +329,7 @@ public class JavacASTViewer extends ViewPart {
 //			length= node.getLength();
 //		}
 		internalSetInput(is);
+		System.out.println("你点击了刷新按钮！！！");
 	}
 
 

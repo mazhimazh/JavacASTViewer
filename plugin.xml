@@ -9,7 +9,7 @@
              icon="icons/sample.png"
              id="astview"
              name="JavacASTViewer"
-             restorable="false">
+             restorable="true">
        </view>
    </extension> 
    

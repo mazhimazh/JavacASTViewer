@@ -1,5 +1,9 @@
 package astview;
 
+import java.util.Set;
+
+import javax.lang.model.element.Modifier;
+
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
@@ -21,14 +25,14 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 		JavacASTNode sub = currnode.accept(this, null);
 		sub.setName(property);
-		if(sub.getType()!=null) {
+		if (sub.getType() == null) {
 			sub.setType(currnode.getClass().getSimpleName());
 		}
 		sub.setParent(parent);
 		parent.addChild(sub);
 
 	}
-	
+
 	public <T extends JCTree> void traverse(JavacASTNode parent, String property, List<T> trees) {
 		if (trees == null || trees.size() == 0)
 			return;
@@ -41,7 +45,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 			JCTree tree = trees.get(i);
 			JavacASTNode def_n = tree.accept(this, null);
 			def_n.setName(i + "");
-			if(def_n.getType()!=null) {
+			if (def_n.getType() == null) {
 				def_n.setType(tree.getClass().getSimpleName());
 			}
 			def_n.setParent(defs);
@@ -373,12 +377,18 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	public JavacASTNode visitLiteral(LiteralTree node, Void p) {
 		JCLiteral t = (JCLiteral) node;
 		JavacASTNode currnode = new JavacASTNode();
-		
-		JavacASTNode value = new JavacASTNode("value", t.value.getClass().getSimpleName(), t.value.toString());
+
+		JavacASTNode value;
+		if (t.value == null) {
+			value = new JavacASTNode("value", "", "null");
+		} else {
+			value = new JavacASTNode("value", t.value.getClass().getSimpleName(), t.value.toString());
+
+		}
 		currnode.addChild(value);
 		value.setParent(currnode);
-		
-		return currnode;		
+
+		return currnode;
 	}
 
 	@Override
@@ -434,6 +444,38 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	public JavacASTNode visitModifiers(ModifiersTree node, Void p) {
 		JCModifiers t = (JCModifiers) node;
 		JavacASTNode currnode = new JavacASTNode();
+		
+		StringBuffer tmp = new StringBuffer();
+		Set<Modifier>  mdfs = t.getFlags();
+		for(Modifier md:mdfs) {
+			tmp.append(" ");
+			if(md == Modifier.ABSTRACT) {
+				tmp.append("abstract");
+			}else if(md == Modifier.FINAL) {
+				tmp.append("final");
+			}else if(md == Modifier.NATIVE) {
+				tmp.append("native");
+			}else if(md == Modifier.PRIVATE) {
+				tmp.append("private");
+			}else if(md == Modifier.PROTECTED) {
+				tmp.append("protected");
+			}else if(md == Modifier.PUBLIC) {
+				tmp.append("public");
+			}else if(md == Modifier.STATIC) {
+				tmp.append("static");
+			}else if(md == Modifier.STRICTFP) {
+				tmp.append("strictfp");
+			}else if(md == Modifier.SYNCHRONIZED) {
+				tmp.append("synchronized");
+			}else if(md == Modifier.TRANSIENT) {
+				tmp.append("transient");
+			}else if(md == Modifier.VOLATILE) {
+				tmp.append("volatile");
+			}else {
+				break;
+			}
+		}
+		currnode.setValue(tmp.toString());
 		
 		// todo
 		traverse(currnode,"annotations",t.annotations);
