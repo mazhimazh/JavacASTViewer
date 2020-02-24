@@ -189,9 +189,9 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		JCBreak t = (JCBreak) node;
 		JavacASTNode currnode = new JavacASTNode();
 		
-		JavacASTNode qualid = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
-		currnode.addChild(qualid);
-		qualid.setParent(currnode);
+		JavacASTNode label = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
+		currnode.addChild(label);
+		label.setParent(currnode);
 		return currnode;
 	}
 

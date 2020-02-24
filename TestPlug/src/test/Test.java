@@ -7,6 +7,7 @@ public class Test {
 	public void test(String a) {
 		List<String> list = null;
 		;
+		String add;
 		
 	}
 }

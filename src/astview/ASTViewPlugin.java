@@ -15,12 +15,9 @@ public class ASTViewPlugin extends AbstractUIPlugin {
 	}
 
 	public static String getPluginId() {
-		return "astview"; //$NON-NLS-1$
+		return "astview"; 
 	}
 
-	/**
-	 * @return the shared instance
-	 */
 	public static ASTViewPlugin getDefault() {
 		return fgDefault;
 	}

@@ -11,8 +11,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
-import astview.JavacASTViewer;
-
 // 被监听方的视图，需要实现 ISelectionProvider 接口
 public class ASTViewSelectionProvider implements ISelectionProvider {
 	ListenerList<ISelectionChangedListener> fListeners= new ListenerList<>(ListenerList.IDENTITY);

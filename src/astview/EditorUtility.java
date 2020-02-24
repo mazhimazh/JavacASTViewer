@@ -1,25 +1,17 @@
 package astview;
 
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
-import org.eclipse.ui.texteditor.ITextEditor;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ITypeRoot;
-
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class EditorUtility {
 	private EditorUtility() {
@@ -48,7 +40,7 @@ public class EditorUtility {
 		return null;
 	}
 
-	public static URI getInputStream(IEditorPart part) {
+	public static URI getURI(IEditorPart part) {
 		IFile file = part.getEditorInput().getAdapter(IFile.class);
 //		try {
 //			System.out.println(file.getLocationURI());
