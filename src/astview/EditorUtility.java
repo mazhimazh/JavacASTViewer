@@ -1,17 +1,11 @@
 package astview;
 
 import java.net.URI;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ITypeRoot;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 public class EditorUtility {
 	private EditorUtility() {
@@ -29,47 +23,50 @@ public class EditorUtility {
 		return null;
 	}
 
-	public static ITypeRoot getJavaInput(IEditorPart part) {
-		IEditorInput editorInput = part.getEditorInput();
-		if (editorInput != null) {
-			IJavaElement input = JavaUI.getEditorInputJavaElement(editorInput);
-			if (input instanceof ITypeRoot) {
-				return (ITypeRoot) input;
-			}
-		}
-		return null;
-	}
+//	public static ITypeRoot getJavaInput(IEditorPart part) {
+//		IEditorInput editorInput = part.getEditorInput();
+//		if (editorInput != null) {
+//			IJavaElement input = JavaUI.getEditorInputJavaElement(editorInput);
+//			if (input instanceof ITypeRoot) {
+//				return (ITypeRoot) input;
+//			}
+//		}
+//		return null;
+//	}
 
 	public static URI getURI(IEditorPart part) {
 		IFile file = part.getEditorInput().getAdapter(IFile.class);
+		return file.getLocationURI();
+	}
+}
 //		try {
-//			System.out.println(file.getLocationURI());
+////			System.out.println(file.getLocationURI());
 //			InputStream i = file.getContents();
-//			
+//			return readInfoStream(i);
 ////			System.out.println(readInfoStream(i));
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
-		
-//		AbstractTextEditor xx = part.getEditorInput().getAdapter(AbstractTextEditor.class);
-//		if (xx != null) {
-//		IDocument document = xx.getDocumentProvider().getDocument(
-//		            part.getEditorInput());
-//		String content = document.get();
-//		 System.out.println(content + "===========");
+//		
+////		AbstractTextEditor xx = part.getEditorInput().getAdapter(AbstractTextEditor.class);
+////		if (xx != null) {
+////			IDocument document = xx.getDocumentProvider().getDocument(part.getEditorInput());
+////			String content = document.get();
+////			System.out.println(content + "===========");
+////			return content;
+////		}
+//		return null;
+//		return file.getLocationURI();
+
+
+//	public static void selectInEditor(ITextEditor editor, int offset, int length) {
+//		IEditorPart active = getActiveEditor();
+//		if (active != editor) {
+//			editor.getSite().getPage().activate(editor);
 //		}
-		
-		return file.getLocationURI();
-	}
-
-	public static void selectInEditor(ITextEditor editor, int offset, int length) {
-		IEditorPart active = getActiveEditor();
-		if (active != editor) {
-			editor.getSite().getPage().activate(editor);
-		}
-		editor.selectAndReveal(offset, length);
-	}
-
+//		editor.selectAndReveal(offset, length);
+//	}
+//
 //	private static final String DEFAULT_ENCODING = "GBK";// 编码
 //	private static final int PROTECTED_LENGTH = 51200;// 输入流保护 50KB
 //
@@ -109,4 +106,4 @@ public class EditorUtility {
 //			throw new Exception("输出异常");
 //		}
 //	}
-}
+

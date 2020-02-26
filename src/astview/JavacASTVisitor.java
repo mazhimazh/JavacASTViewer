@@ -24,7 +24,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 			return;
 
 		JavacASTNode sub = currnode.accept(this, null);
-		sub.setName(property);
+		sub.setProperty(property);
 		if (sub.getType() == null) {
 			sub.setType(currnode.getClass().getSimpleName());
 		}
@@ -44,7 +44,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 		for (int i = 0; i < trees.size(); i++) {
 			JCTree tree = trees.get(i);
 			JavacASTNode def_n = tree.accept(this, null);
-			def_n.setName(i + "");
+			def_n.setProperty(i + "");
 			if (def_n.getType() == null) {
 				def_n.setType(tree.getClass().getSimpleName());
 			}
@@ -58,9 +58,10 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	public JavacASTNode visitCompilationUnit(CompilationUnitTree node, Void p) {
 		JCCompilationUnit t = (JCCompilationUnit) node;
 		JavacASTNode currnode = new JavacASTNode();
-		currnode.setName("root");
+		currnode.setProperty("root");
 		currnode.setType(t.getClass().getSimpleName());
 
+		traverse(currnode,"packageAnnotations",t.packageAnnotations);
 		traverse(currnode,"pid",t.pid);
 		traverse(currnode,"defs",t.defs);
 
@@ -92,9 +93,9 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	public JavacASTNode visitIdentifier(IdentifierTree node, Void p) {
 		JCIdent t = (JCIdent) node;
 		JavacASTNode currnode = new JavacASTNode();
-		JavacASTNode qualid = new JavacASTNode("name", t.name.getClass().getSimpleName(), t.name.toString());
-		currnode.addChild(qualid);
-		qualid.setParent(currnode);
+		JavacASTNode name = new JavacASTNode("name", t.name.getClass().getSimpleName(), t.name.toString());
+		currnode.addChild(name);
+		name.setParent(currnode);
 		return currnode;
 	}
 

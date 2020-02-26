@@ -13,27 +13,24 @@ import org.osgi.framework.Bundle;
 
 public class ASTViewImages {
 
-	private static final IPath ICONS_PATH = new Path("$nl$/icons"); //$NON-NLS-1$
+	private static final IPath ICONS_PATH = new Path("$nl$/icons"); 
 
-	public static final String COLLAPSE = "collapseall.png"; //$NON-NLS-1$
-	public static final String EXPAND = "expandall.png"; //$NON-NLS-1$
-	public static final String LINK_WITH_EDITOR = "synced.png"; //$NON-NLS-1$
+	public static final String COLLAPSE = "collapseall.png"; 
+	public static final String EXPAND = "expandall.png"; 
+	public static final String LINK_WITH_EDITOR = "synced.png"; 
 
-	public static final String SETFOCUS = "setfocus.png"; //$NON-NLS-1$
-	public static final String REFRESH = "refresh.png"; //$NON-NLS-1$
-	public static final String CLEAR = "clear.png"; //$NON-NLS-1$
+	public static final String SETFOCUS = "setfocus.png"; 
+	public static final String REFRESH = "refresh.png"; 
+	public static final String CLEAR = "clear.png"; 
 
-	public static final String ADD_TO_TRAY = "add.png"; //$NON-NLS-1$
-
-	// ---- Helper methods to access icons on the file system
-	// --------------------------------------
+	public static final String ADD_TO_TRAY = "add.png"; 
 
 	public static void setImageDescriptors(IAction action, String type) {
-		ImageDescriptor id = create("d", type); //$NON-NLS-1$
+		ImageDescriptor id = create("d", type);
 		if (id != null)
 			action.setDisabledImageDescriptor(id);
 
-		id = create("e", type); //$NON-NLS-1$
+		id = create("e", type); 
 		if (id != null) {
 			action.setHoverImageDescriptor(id);
 			action.setImageDescriptor(id);

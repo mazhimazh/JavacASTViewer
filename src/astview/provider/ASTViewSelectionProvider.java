@@ -27,6 +27,8 @@ public class ASTViewSelectionProvider implements ISelectionProvider {
 
 	@Override
 	public ISelection getSelection() {
+		
+		System.out.println("getSelection()方法");
 		// fViewer的类型为TreeViewer
 		IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
 		ArrayList<Object> externalSelection= new ArrayList<>();
