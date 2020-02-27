@@ -6,6 +6,7 @@ import javax.lang.model.element.Modifier;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.TypeTag;
+import com.sun.tools.javac.tree.EndPosTable;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.List;
@@ -53,14 +54,17 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 			defs.addChild(def_n);
 		}
 	}
+	
+	
 
 	@Override
 	public JavacASTNode visitCompilationUnit(CompilationUnitTree node, Void p) {
 		JCCompilationUnit t = (JCCompilationUnit) node;
-		JavacASTNode currnode = new JavacASTNode();
+//		ept = t.endPositions;
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		currnode.setProperty("root");
 		currnode.setType(t.getClass().getSimpleName());
-
+		
 		traverse(currnode,"packageAnnotations",t.packageAnnotations);
 		traverse(currnode,"pid",t.pid);
 		traverse(currnode,"defs",t.defs);
@@ -71,7 +75,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitClass(ClassTree node, Void p) {
 		JCClassDecl t = (JCClassDecl) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		traverse(currnode,"extending",t.extending);
 		traverse(currnode,"implementing",t.implementing);
@@ -82,7 +86,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 	public JavacASTNode visitImport(ImportTree node, Void curr) {
 		JCImport t = (JCImport) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"qualid",t.qualid);
 
@@ -92,7 +96,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitIdentifier(IdentifierTree node, Void p) {
 		JCIdent t = (JCIdent) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		JavacASTNode name = new JavacASTNode("name", t.name.getClass().getSimpleName(), t.name.toString());
 		currnode.addChild(name);
 		name.setParent(currnode);
@@ -102,7 +106,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitAnnotatedType(AnnotatedTypeTree node, Void p) {
 		JCAnnotatedType t = (JCAnnotatedType) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode, "annotations", t.annotations);
 		traverse(currnode, "underlyingType", t.underlyingType);
@@ -113,7 +117,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitAnnotation(AnnotationTree node, Void p) {
 		JCAnnotation t = (JCAnnotation) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		traverse(currnode, "annotationType", t.annotationType);
 		traverse(currnode, "args", t.args);
@@ -124,7 +128,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitArrayAccess(ArrayAccessTree node, Void p) {
 		JCArrayAccess t = (JCArrayAccess) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"indexed",t.indexed);
 		traverse(currnode,"index",t.index);
@@ -135,7 +139,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitArrayType(ArrayTypeTree node, Void p) {
 		JCArrayTypeTree t = (JCArrayTypeTree) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"elemtype",t.elemtype);
 
@@ -145,7 +149,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitAssert(AssertTree node, Void p) {
 		JCAssert t = (JCAssert) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"cond",t.cond);
 		traverse(currnode,"detail",t.detail);
@@ -156,7 +160,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitAssignment(AssignmentTree node, Void p) {
 		JCAssign t = (JCAssign) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"lhs",t.lhs);
 		traverse(currnode,"rhs",t.rhs);
@@ -167,7 +171,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitBinary(BinaryTree node, Void p) {
 		JCBinary t = (JCBinary) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"lhs",t.lhs);
 		traverse(currnode,"rhs",t.rhs);
@@ -178,7 +182,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitBlock(BlockTree node, Void p) {
 		JCBlock t = (JCBlock) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"stats",t.stats);
 
@@ -188,7 +192,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitBreak(BreakTree node, Void p) {
 		JCBreak t = (JCBreak) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		JavacASTNode label = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
 		currnode.addChild(label);
@@ -199,7 +203,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitCase(CaseTree node, Void p) {
 		JCCase t = (JCCase) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"pat",t.pat);
 		traverse(currnode,"stats",t.stats);
@@ -210,7 +214,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitCatch(CatchTree node, Void p) {
 		JCCatch t = (JCCatch) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		traverse(currnode,"param",t.param);
 		traverse(currnode,"body",t.body);
@@ -221,7 +225,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitCompoundAssignment(CompoundAssignmentTree node, Void p) {
 		JCAssignOp t = (JCAssignOp) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"lhs",t.lhs);
 		traverse(currnode,"rhs",t.rhs);
@@ -232,7 +236,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitConditionalExpression(ConditionalExpressionTree node, Void p) {
 		JCConditional t = (JCConditional) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		traverse(currnode,"cond",t.cond);
 		traverse(currnode,"truepart",t.truepart);
@@ -244,7 +248,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitContinue(ContinueTree node, Void p) {
 		JCContinue t = (JCContinue) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		JavacASTNode label = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
 		currnode.addChild(label);
@@ -255,7 +259,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitDoWhileLoop(DoWhileLoopTree node, Void p) {
 		JCDoWhileLoop t = (JCDoWhileLoop) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"cond",t.cond);
 		traverse(currnode,"body",t.body);
@@ -265,8 +269,8 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 	@Override
 	public JavacASTNode visitEmptyStatement(EmptyStatementTree node, Void p) {
-//		JCSkip t = (JCSkip) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JCSkip t = (JCSkip) node;
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		currnode.setValue(";");
 		return currnode;
 	}
@@ -274,7 +278,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitEnhancedForLoop(EnhancedForLoopTree node, Void p) {
 		JCEnhancedForLoop t = (JCEnhancedForLoop) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"var",t.var);
 		traverse(currnode,"expr",t.expr);
@@ -286,7 +290,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitErroneous(ErroneousTree node, Void p) {
 		JCErroneous t = (JCErroneous) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"errs",t.errs);
 
@@ -296,7 +300,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitExpressionStatement(ExpressionStatementTree node, Void p) {
 		JCExpressionStatement t = (JCExpressionStatement) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"expr",t.expr);
 
@@ -306,7 +310,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitForLoop(ForLoopTree node, Void p) {
 		JCForLoop t = (JCForLoop) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"init",t.init);
 		traverse(currnode,"cond",t.cond);
@@ -319,7 +323,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitIf(IfTree node, Void p) {
 		JCIf t = (JCIf) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"cond",t.cond);
 		traverse(currnode,"thenpart",t.thenpart);
@@ -331,7 +335,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitInstanceOf(InstanceOfTree node, Void p) {
 		JCInstanceOf t = (JCInstanceOf) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"expr",t.expr);
 		traverse(currnode,"clazz",t.clazz);
@@ -342,7 +346,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitIntersectionType(IntersectionTypeTree node, Void p) {
 		JCTypeIntersection t = (JCTypeIntersection) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"bounds",t.bounds);
 		
@@ -352,7 +356,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitLabeledStatement(LabeledStatementTree node, Void p) {
 		JCLabeledStatement t = (JCLabeledStatement) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		JavacASTNode label = new JavacASTNode("label", t.label.getClass().getSimpleName(), t.label.toString());
 		currnode.addChild(label);
@@ -366,7 +370,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitLambdaExpression(LambdaExpressionTree node, Void p) {
 		JCLambda t = (JCLambda) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		traverse(currnode, "params", t.params);
 		traverse(currnode, "body", t.body);
@@ -377,7 +381,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitLiteral(LiteralTree node, Void p) {
 		JCLiteral t = (JCLiteral) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		JavacASTNode value;
 		if (t.value == null) {
@@ -395,7 +399,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitMemberReference(MemberReferenceTree node, Void p) {
 		JCMemberReference t = (JCMemberReference) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode, "expr", t.expr);
 		traverse(currnode, "typeargs", t.typeargs);
@@ -406,7 +410,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitMemberSelect(MemberSelectTree node, Void p) {
 		JCFieldAccess t = (JCFieldAccess) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"selected",t.selected);
 
@@ -416,7 +420,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitMethod(MethodTree node, Void p) {
 		JCMethodDecl t = (JCMethodDecl) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"mods",t.mods);
 		traverse(currnode,"restype",t.restype);
@@ -432,7 +436,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitMethodInvocation(MethodInvocationTree node, Void p) {
 		JCMethodInvocation t = (JCMethodInvocation) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"typeargs",t.typeargs);
 		traverse(currnode,"meth",t.meth);
@@ -444,7 +448,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitModifiers(ModifiersTree node, Void p) {
 		JCModifiers t = (JCModifiers) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		StringBuffer tmp = new StringBuffer();
 		Set<Modifier>  mdfs = t.getFlags();
@@ -487,7 +491,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitNewArray(NewArrayTree node, Void p) {
 		JCNewArray t = (JCNewArray) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"elemtype",t.elemtype);
 		traverse(currnode,"dims",t.dims);
@@ -499,7 +503,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitNewClass(NewClassTree node, Void p) {
 		JCNewClass t = (JCNewClass) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		traverse(currnode,"encl",t.encl);
 		traverse(currnode,"typeargs",t.typeargs);
@@ -512,18 +516,18 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 
 	@Override
 	public JavacASTNode visitOther(Tree node, Void p) {
-		JCTree tree = (JCTree) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JCTree t = (JCTree) node;
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
-		switch (tree.getTag()) {
+		switch (t.getTag()) {
 		case LETEXPR: {
-			LetExpr t = (LetExpr) node;
-			traverse(currnode, "defs", t.defs);
-			traverse(currnode, "expr", t.expr);
+			LetExpr le = (LetExpr) node;
+			traverse(currnode, "defs", le.defs);
+			traverse(currnode, "expr", le.expr);
 			return currnode;
 		}
 		default:
-			throw new AssertionError("unknown tree tag: " + tree.getTag());
+			throw new AssertionError("unknown tree tag: " + t.getTag());
 		}
 
 	}
@@ -531,7 +535,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitParameterizedType(ParameterizedTypeTree node, Void p) {
 		JCTypeApply t = (JCTypeApply) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"clazz",t.clazz);
 		traverse(currnode,"arguments",t.arguments);
@@ -542,7 +546,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitParenthesized(ParenthesizedTree node, Void p) {
 		JCParens t = (JCParens) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"expr",t.expr);
 
@@ -552,7 +556,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitPrimitiveType(PrimitiveTypeTree node, Void p) {
 		JCPrimitiveTypeTree t = (JCPrimitiveTypeTree) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		TypeTag tag = t.typetag;
 		switch (tag) {
@@ -591,7 +595,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitReturn(ReturnTree node, Void p) {
 		JCReturn t = (JCReturn) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"expr",t.expr);
 
@@ -601,7 +605,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitSwitch(SwitchTree node, Void p) {
 		JCSwitch t = (JCSwitch) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"selector",t.selector);
 		traverse(currnode,"cases",t.cases);
@@ -612,7 +616,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitSynchronized(SynchronizedTree node, Void p) {
 		JCSynchronized t = (JCSynchronized) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"lock",t.lock);
 		traverse(currnode,"body",t.body);
@@ -623,7 +627,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitThrow(ThrowTree node, Void p) {
 		JCThrow t = (JCThrow) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"expr",t.expr);
 
@@ -633,7 +637,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitTry(TryTree node, Void p) {
 		JCTry t = (JCTry) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"resources",t.resources);
 		traverse(currnode,"body",t.body);
@@ -646,7 +650,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitTypeCast(TypeCastTree node, Void p) {
 		JCTypeCast t = (JCTypeCast) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"clazz",t.clazz);
 		traverse(currnode,"expr",t.expr);
@@ -657,7 +661,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitTypeParameter(TypeParameterTree node, Void p) {
 		JCTypeParameter t = (JCTypeParameter) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"bounds",t.bounds);
 
@@ -667,7 +671,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitUnary(UnaryTree node, Void p) {
 		JCUnary t = (JCUnary) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"arg",t.arg);
 
@@ -677,7 +681,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitUnionType(UnionTypeTree node, Void p) {
 		JCTypeUnion t = (JCTypeUnion) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 
 		traverse(currnode,"alternatives",t.alternatives);
 		
@@ -687,7 +691,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitVariable(VariableTree node, Void p) {
 		JCVariableDecl t = (JCVariableDecl) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"mods",t.mods);
 		traverse(currnode,"vartype",t.vartype);
@@ -699,7 +703,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitWhileLoop(WhileLoopTree node, Void p) {
 		JCWhileLoop t = (JCWhileLoop) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		traverse(currnode,"body",t.body);
 		traverse(currnode,"cond",t.cond);
@@ -710,7 +714,7 @@ public class JavacASTVisitor implements TreeVisitor<JavacASTNode, Void> {
 	@Override
 	public JavacASTNode visitWildcard(WildcardTree node, Void p) {
 		JCWildcard t = (JCWildcard) node;
-		JavacASTNode currnode = new JavacASTNode();
+		JavacASTNode currnode = new JavacASTNode(t.getStartPosition(),t.getEndPosition(JavacASTViewer.ept));
 		
 		// todo
 		traverse(currnode,"inner",t.inner);

@@ -1,6 +1,5 @@
 package astview;
 
-import java.io.File;
 import java.net.URI;
 
 import javax.tools.JavaFileManager;
@@ -9,39 +8,30 @@ import javax.tools.JavaFileObject;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import com.sun.tools.javac.file.JavacFileManager;
 import com.sun.tools.javac.main.JavaCompiler;
-import com.sun.tools.javac.parser.Parser;
-import com.sun.tools.javac.parser.ParserFactory;
-import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.EndPosTable;
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 import com.sun.tools.javac.util.Context;
 
 import astview.listener.ListenerMix;
-import astview.provider.ASTViewSelectionProvider;
 import astview.provider.ViewContentProvider;
 import astview.provider.ViewLabelProvider;
-import astview.test.ViewTestContentProvider;
 
 
 public class JavacASTViewer extends ViewPart {
@@ -49,31 +39,33 @@ public class JavacASTViewer extends ViewPart {
 	public static final String ID = "javacastviewer";
 	
 	private TreeViewer fViewer;
-	private SashForm fSash;
+//	private SashForm fSash;
 	
 	private ListenerMix fSuperListener;
 
 	
 	private Action fRefreshAction;
-	private Action fFocusAction;
+	private Action fCollapseAction;
+	private Action fExpandAction;
+	private Action fDoubleClickAction;
 	
 	private IDocument fCurrentDocument;
 	private ITextEditor fEditor;
 	
-	URI is;
+	URI uri;
 
 	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.setSite(site);
-//		if (fSuperListener == null) {
-//			fSuperListener= new ListenerMix(this);
+		if (fSuperListener == null) {
+			fSuperListener= new ListenerMix(this);
 //
 //			// 下面是什么意思？？
 //			ISelectionService service= site.getWorkbenchWindow().getSelectionService();
 //			service.addPostSelectionListener(fSuperListener);
 //			site.getPage().addPartListener(fSuperListener);
 //			FileBuffers.getTextFileBufferManager().addFileBufferListener(fSuperListener);
-//		}
+		}
 	}
 
 	public void createPartControl(Composite parent) {
@@ -87,10 +79,10 @@ public class JavacASTViewer extends ViewPart {
 //		fViewer.setContentProvider(new ViewTestContentProvider());
 //		fViewer.setInput(getSite());
 //		fViewer.addSelectionChangedListener(fSuperListener);
-//		fViewer.addDoubleClickListener(fSuperListener);
+		fViewer.addDoubleClickListener(fSuperListener);
 		
-//		makeActions();
-//		contributeToActionBars();
+		makeActions();
+		contributeToActionBars();
 //		getSite().setSelectionProvider(new ASTViewSelectionProvider(fViewer));
 		
 		try {
@@ -106,6 +98,8 @@ public class JavacASTViewer extends ViewPart {
 	public void setFocus() {
 		// not supported
 	}
+	
+	// ------------------------------------------------------------------------------------
 	
 	private void makeActions() {
 		fRefreshAction = new Action() {
@@ -123,56 +117,101 @@ public class JavacASTViewer extends ViewPart {
 		fRefreshAction.setEnabled(false);
 		ASTViewImages.setImageDescriptors(fRefreshAction, ASTViewImages.REFRESH);
 		
-		
-		fFocusAction = new Action() {
+		fCollapseAction = new Action() {
 			@Override
 			public void run() {
-				performSetFocus();
+				performCollapse();
 			}
 		};
-		fFocusAction.setText("&Show AST of active editor"); 
-		fFocusAction.setToolTipText("Show AST of active editor"); 
-		fFocusAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
-		ASTViewImages.setImageDescriptors(fFocusAction, ASTViewImages.SETFOCUS);
+		fCollapseAction.setText("C&ollapse"); 
+		fCollapseAction.setToolTipText("Collapse Selected Node"); 
+		fCollapseAction.setEnabled(true);
+		ASTViewImages.setImageDescriptors(fCollapseAction, ASTViewImages.COLLAPSE);
+
+		fExpandAction = new Action() {
+			@Override
+			public void run() {
+				performExpand();
+			}
+		};
+		fExpandAction.setText("E&xpand"); 
+		fExpandAction.setToolTipText("Expand Selected Node"); 
+		fExpandAction.setEnabled(true);
+		ASTViewImages.setImageDescriptors(fExpandAction, ASTViewImages.EXPAND);
+		
+		fDoubleClickAction = new Action() {
+			@Override
+			public void run() {
+				performDoubleClick();
+			}
+		};
+
 	}
 	
-	protected void performSetFocus() {
-		IEditorPart part= EditorUtility.getActiveEditor();
-		if (part instanceof ITextEditor) {
-			try {
-				setInput((ITextEditor) part);
-			} catch (CoreException e) {
-				e.printStackTrace();
+	private void refreshAST() throws CoreException {
+		internalSetInput(uri);
+	}
+
+	protected void performCollapse() {
+		IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
+		if (selection.isEmpty()) {
+			fViewer.collapseAll();
+		} else {
+			fViewer.getTree().setRedraw(false);
+			for (Object s : selection.toArray()) {
+				fViewer.collapseToLevel(s, AbstractTreeViewer.ALL_LEVELS);
 			}
+			fViewer.getTree().setRedraw(true);
+		}
+	}
+
+	protected void performExpand() {
+		IStructuredSelection selection= (IStructuredSelection) fViewer.getSelection();
+		if (selection.isEmpty()) {
+			fViewer.expandToLevel(3);
+		} else {
+			fViewer.getTree().setRedraw(false);
+			for (Object s : selection.toArray()) {
+				fViewer.expandToLevel(s, AbstractTreeViewer.ALL_LEVELS);
+			}
+			fViewer.getTree().setRedraw(true);
 		}
 	}
 	
-	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(fFocusAction);
-		manager.add(fRefreshAction);
+	protected void performDoubleClick() {
+		if (fEditor == null) {
+			return;
+		}
+
+		ISelection selection = fViewer.getSelection();
+		Object obj = ((IStructuredSelection) selection).getFirstElement();
+		if(obj!=null && obj instanceof JavacASTNode) {
+			JavacASTNode node = (JavacASTNode)obj;
+			EditorUtility.selectInEditor(fEditor, node.getStartpos(),node.getEndpos()-node.getStartpos());
+		}
 	}
+	
+	// ------------------------------------------------------------------------------------
 	
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
-		fillLocalToolBar(bars.getToolBarManager());
-		bars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fFocusAction);
+		bars.getToolBarManager().add(fRefreshAction);
+		bars.getToolBarManager().add(fCollapseAction);
+		bars.getToolBarManager().add(fExpandAction);
 	}
 
-	private void refreshAST() throws CoreException {
-		internalSetInput(is);
-		System.out.println("你点击了刷新按钮！！！");
-	}
-
+	
 	public void setInput(ITextEditor editor) throws CoreException {
 		if (editor != null) {
 			fEditor = editor;
-			is = EditorUtility.getURI(editor);
-			internalSetInput(is);
-//			installModificationListener();
+			uri = EditorUtility.getURI(editor);
+			internalSetInput(uri);
+			installModificationListener();
 		}
 	}
 	
-	
+	// 1、点击刷新按钮时会调用
+	// 2、在启动视图时，也就是在createPartControl()方法中会间接调用
 	private JCCompilationUnit internalSetInput(URI is) throws CoreException {
 		JCCompilationUnit root = null;
 		try {
@@ -189,7 +228,6 @@ public class JavacASTViewer extends ViewPart {
 	}
 	
 	
-//	
 //	ParserFactory pf = null;
 //	{
 //		Context context = new Context();
@@ -197,29 +235,27 @@ public class JavacASTViewer extends ViewPart {
 //		pf = ParserFactory.instance(context);
 //	}
 	
-	JavacFileManager dfm = null;
-	JavaCompiler comp = null;
+	public static EndPosTable ept = null;
+	
 	private JCCompilationUnit createAST(URI is) {
-		if (comp == null) {
-			Context context = new Context();
-			JavacFileManager.preRegister(context);
-			JavaFileManager fileManager = context.get(JavaFileManager.class);
-			comp = JavaCompiler.instance(context);
-			dfm = (JavacFileManager) fileManager;
-		}
-		
-		
+		Context context = new Context();
+		JavacFileManager.preRegister(context);
+		JavaFileManager fileManager = context.get(JavaFileManager.class);
+		JavaCompiler comp = JavaCompiler.instance(context);
+		JavacFileManager dfm = (JavacFileManager) fileManager;
+
 		JavaFileObject jfo = dfm.getFileForInput(is.getPath());
+		comp.genEndPos = true;
 		JCCompilationUnit tree = comp.parse(jfo);
-//		CharSequence seq = java.nio.CharBuffer.wrap(is.toCharArray());
-//		 Parser parser = pf.newParser(is,false, false, false);
-//		 JCCompilationUnit  tree = parser.parseCompilationUnit();
+		ept = tree.endPositions;
 		
+//		CharSequence seq = java.nio.CharBuffer.wrap(is.toCharArray());
+//		Parser parser = pf.newParser(is,false, false, false);
+//		JCCompilationUnit  tree = parser.parseCompilationUnit();
 
 //		com.sun.tools.javac.util.List<JavaFileObject> otherFiles = com.sun.tools.javac.util.List.nil();
 //		for (JavaFileObject fo : dfm.getJavaFileObjects(new File(is)))
 //			otherFiles = otherFiles.prepend(fo);
-//
 //		com.sun.tools.javac.util.List<JCTree.JCCompilationUnit> list = comp.parseFiles(otherFiles);
 
 		return tree;
@@ -229,21 +265,30 @@ public class JavacASTViewer extends ViewPart {
 		fViewer.setInput(root);
 //		fViewer.getTree().setEnabled(root != null);
 //		fSash.setMaximizedControl(fViewer.getTree());
-//		setASTUptoDate(root != null);
+		setASTUptoDate(root != null);
 	}
 
+	// -----------------handle start---------------------------------------------------
 	
-	private void installModificationListener() {
-		fCurrentDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
-		fCurrentDocument.addDocumentListener(fSuperListener);
+	public void handleDoubleClick() {
+		fDoubleClickAction.run();
 	}
 	
 	public void handleDocumentChanged() {
 		setASTUptoDate(false);
 	}
 	
+	// -----------------handle end---------------------------------------------------
+
+	
 	private void setASTUptoDate(boolean isuptoDate) {
-		fRefreshAction.setEnabled(!isuptoDate && is != null);
+		fRefreshAction.setEnabled(!isuptoDate && uri != null);
+	}
+	
+	
+	private void installModificationListener() {
+		fCurrentDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
+		fCurrentDocument.addDocumentListener(fSuperListener);
 	}
 	
 	private void uninstallModificationListener() {
@@ -259,16 +304,11 @@ public class JavacASTViewer extends ViewPart {
 	
 	
 	@Override
-	public void dispose() {
-		System.out.println("dispose()");
+	public void dispose() { // 当关闭视图时会调用这个方法
 		if (fSuperListener != null) {
 			if (fEditor != null) {
 				uninstallModificationListener();
 			}
-			ISelectionService service= getSite().getWorkbenchWindow().getSelectionService();
-			service.removePostSelectionListener(fSuperListener);
-			getSite().getPage().removePartListener(fSuperListener);
-			FileBuffers.getTextFileBufferManager().removeFileBufferListener(fSuperListener);
 			fSuperListener.dispose(); // removes reference to view
 			fSuperListener= null;
 		}

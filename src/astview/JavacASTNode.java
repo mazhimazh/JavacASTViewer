@@ -11,6 +11,8 @@ public class JavacASTNode {
 
 	private List<JavacASTNode> children = null;
 	private JavacASTNode parent = null;
+	
+	private int startpos,endpos;
 
 	public JavacASTNode(String property, String type) {
 		this.property = property;
@@ -23,8 +25,10 @@ public class JavacASTNode {
 		this.value = value;
 	}
 
-	public JavacASTNode() {
+	public JavacASTNode(int startpos,int endpos) {
 		children = new ArrayList<JavacASTNode>();
+		this.startpos = startpos;
+		this.endpos = endpos;
 	}
 
 	public List<JavacASTNode> getChildren() {
@@ -69,6 +73,24 @@ public class JavacASTNode {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	
+
+	public int getStartpos() {
+		return startpos;
+	}
+
+	public void setStartpos(int startpos) {
+		this.startpos = startpos;
+	}
+
+	public int getEndpos() {
+		return endpos;
+	}
+
+	public void setEndpos(int endpos) {
+		this.endpos = endpos;
 	}
 
 	public String toString() {

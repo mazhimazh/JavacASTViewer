@@ -4,15 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Test {
-	List<String> a = new ArrayList<String>();
-	String b;
-	int c;
-
+	int a;
+	
 	public void test() {
-		a.add("test");
-		b = "hello word!";
-		c = 1;
+		{
+			List<String> a = new ArrayList<String>();
+		}
+		{
+			
+			
+		}
 	}
+	
+//	List<String> a = new ArrayList<String>();
+//	String b;
+//	int c;
+//
+//	public void test() {
+//		a.add("test");
+//		b = "hello word!";
+//		c = 1;
+//	}
 }
 
 //import java.util.List;
