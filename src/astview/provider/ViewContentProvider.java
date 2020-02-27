@@ -1,23 +1,13 @@
 package astview.provider;
 
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
-import com.sun.tools.javac.tree.EndPosTable;
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 
 import astview.JavacASTNode;
 import astview.JavacASTVisitor;
 
-public class ViewContentProvider extends ArrayContentProvider implements ITreeContentProvider {
-	
-	
-//	EndPosTable ept = null;
-//	
-//	public ViewContentProvider(EndPosTable ept) {
-//		super();
-//		this.ept = ept;
-//	}
+public class ViewContentProvider implements ITreeContentProvider {
 	
 	
 	public Object[] getElements(Object inputElement) {
@@ -61,7 +51,4 @@ public class ViewContentProvider extends ArrayContentProvider implements ITreeCo
 		JavacASTNode node = (JavacASTNode) element;
 		return node.getChildren().size() > 0 ? true : false;
 	}
-
-	
-
 }

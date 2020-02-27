@@ -5,7 +5,6 @@ import java.net.URI;
 import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 
-import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.IDocument;
@@ -17,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
@@ -39,7 +37,6 @@ public class JavacASTViewer extends ViewPart {
 	public static final String ID = "javacastviewer";
 	
 	private TreeViewer fViewer;
-//	private SashForm fSash;
 	
 	private ListenerMix fSuperListener;
 
@@ -59,26 +56,16 @@ public class JavacASTViewer extends ViewPart {
 		super.setSite(site);
 		if (fSuperListener == null) {
 			fSuperListener= new ListenerMix(this);
-//
-//			// 下面是什么意思？？
-//			ISelectionService service= site.getWorkbenchWindow().getSelectionService();
-//			service.addPostSelectionListener(fSuperListener);
-//			site.getPage().addPartListener(fSuperListener);
-//			FileBuffers.getTextFileBufferManager().addFileBufferListener(fSuperListener);
 		}
 	}
 
 	public void createPartControl(Composite parent) {
-//		fSash= new SashForm(parent, SWT.VERTICAL | SWT.SMOOTH);
-//		fViewer = new TreeViewer(fSash, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		fViewer = new TreeViewer(parent, SWT.SINGLE);
-		
 		fViewer.setLabelProvider(new ViewLabelProvider());
 		fViewer.setContentProvider(new ViewContentProvider());
 //		fViewer.setContentProvider(new ViewTestContentProvider());
 //		fViewer.setInput(getSite());
-//		fViewer.addSelectionChangedListener(fSuperListener);
 		fViewer.addDoubleClickListener(fSuperListener);
 		
 		makeActions();

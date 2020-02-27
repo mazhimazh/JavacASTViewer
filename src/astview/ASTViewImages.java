@@ -17,13 +17,9 @@ public class ASTViewImages {
 
 	public static final String COLLAPSE = "collapseall.png"; 
 	public static final String EXPAND = "expandall.png"; 
-	public static final String LINK_WITH_EDITOR = "synced.png"; 
-
-	public static final String SETFOCUS = "setfocus.png"; 
 	public static final String REFRESH = "refresh.png"; 
 	public static final String CLEAR = "clear.png"; 
 
-	public static final String ADD_TO_TRAY = "add.png"; 
 
 	public static void setImageDescriptors(IAction action, String type) {
 		ImageDescriptor id = create("d", type);
